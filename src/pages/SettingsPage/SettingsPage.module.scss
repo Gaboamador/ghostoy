@@ -1,0 +1,10 @@
+.actions {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 700px) {
+  .actions {
+    max-width: 32rem;
+  }
+}

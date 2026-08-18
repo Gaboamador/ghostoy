@@ -1,0 +1,22 @@
+@use '../../styles/variables' as *;
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  color: $muted;
+}
+
+.alternative {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px dashed $border;
+  border-radius: $r-md;
+  color: $muted;
+  text-align: center;
+}
+
+.alternative p {
+  margin: 0.35rem 0 0;
+}

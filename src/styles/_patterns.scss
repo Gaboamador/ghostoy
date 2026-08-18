@@ -1,0 +1,12 @@
+@mixin responsive-grid {
+    display: grid;
+    gap: 1rem;
+
+    @media(min-width:700px) {
+        grid-template-columns: repeat(2, 1fr)
+    }
+
+    @media(min-width:1050px) {
+        grid-template-columns: repeat(3, 1fr)
+    }
+}

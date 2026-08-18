@@ -1,0 +1,3 @@
+import React from 'react';import{createRoot}from'react-dom/client';import{BrowserRouter}from'react-router-dom';import{ProgressProvider}from'./context/ProgressContext';import App from'./App';import'./styles/globals.scss';
+if(import.meta.env.DEV&&'serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));if('caches'in window)caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));}
+createRoot(document.getElementById('root')).render(<React.StrictMode><BrowserRouter><ProgressProvider><App/></ProgressProvider></BrowserRouter></React.StrictMode>);

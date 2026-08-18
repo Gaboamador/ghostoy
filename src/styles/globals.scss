@@ -1,0 +1,137 @@
+@use 'variables' as *;
+
+* {
+    box-sizing: border-box
+}
+
+html {
+    background: $bg;
+    color-scheme: dark
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(circle at 85% -10%, #51231f55, transparent 30rem), $bg;
+    color: $text;
+    font: 400 16px/1.5 system-ui, sans-serif
+}
+
+button,
+input,
+select {
+    font: inherit
+}
+
+button {
+    cursor: pointer
+}
+
+a {
+    color: inherit;
+    text-decoration: none
+}
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0
+}
+
+.page {
+    width: min(100% - 2rem, 70rem);
+    margin: auto;
+    padding: 1.25rem 0 6.5rem
+}
+
+.pageHeader {
+    margin-bottom: 1.25rem
+}
+
+.eyebrow {
+    color: $accent-2;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: .72rem;
+    font-weight: 800
+}
+
+.muted {
+    color: $muted
+}
+
+.button {
+    min-height: 44px;
+    border: 0;
+    border-radius: $r-sm;
+    padding: .65rem 1rem;
+    background: $accent;
+    color: white;
+    font-weight: 750
+}
+
+.button--secondary {
+    background: $surface-2;
+    border: 1px solid $border;
+    color: $text
+}
+
+.badge {
+    display: inline-flex;
+    padding: .2rem .55rem;
+    border-radius: 99px;
+    background: #ffffff12;
+    color: $muted;
+    font-size: .78rem
+}
+
+.input {
+    width: 100%;
+    min-height: 46px;
+    padding: .7rem .8rem;
+    border: 1px solid $border;
+    border-radius: $r-sm;
+    background: $surface;
+    color: $text
+}
+
+.stack {
+    display: grid;
+    gap: .8rem
+}
+
+.grid {
+    display: grid;
+    gap: 1rem
+}
+
+.filterRow,
+.filterGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5rem
+}
+
+.empty {
+    padding: 1.25rem;
+    text-align: center;
+    color: $muted;
+    border: 1px dashed $border;
+    border-radius: $r-md
+}
+
+@media(min-width:700px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr)
+    }
+
+    .page {
+        padding-top: 2rem
+    }
+}
+
+@media(min-width:1050px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr)
+    }
+}
