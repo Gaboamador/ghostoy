@@ -1,1 +1,41 @@
-@use '../../styles/variables' as *;@use '../../styles/mixins' as *;.card{@include card;padding:1rem;display:grid;gap:.8rem}.card h2{font-size:1.15rem;margin:.45rem 0 0}.progress{display:flex;justify-content:space-between;color:$muted;font-size:.84rem}.progress strong{color:$text}.missing{color:$muted;font-size:.8rem;margin:0}.link{display:flex;align-items:center;justify-content:space-between;color:$accent-2;font-weight:750;padding-top:.25rem}
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.card {
+  @include card;
+
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.card h2 {
+  margin: 0.45rem 0 0;
+  font-size: 1.15rem;
+}
+
+.progress {
+  display: flex;
+  justify-content: space-between;
+  color: $muted;
+  font-size: 0.84rem;
+}
+
+.progress strong {
+  color: $text;
+}
+
+.missing {
+  margin: 0;
+  color: $muted;
+  font-size: 0.8rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.25rem;
+  color: $accent-2;
+  font-weight: 750;
+}
