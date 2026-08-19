@@ -72,6 +72,7 @@
 }
 
 .selected .checkbox {
+  color: $bg;
   background: $accent;
   border-color: $accent;
 }
@@ -96,7 +97,7 @@
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   margin: 1rem 0;
 }
@@ -132,6 +133,16 @@
   padding: 0.45rem 0.7rem;
 }
 
+.sectionHeader > button {
+  min-height: 40px;
+  padding: 0.45rem 0.7rem;
+}
+
+.sectionHeader > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .sharedToggle {
   display: flex;
   align-items: center;
@@ -146,6 +157,48 @@
 .missingList {
   display: grid;
   gap: 0.65rem;
+}
+
+.route {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.areaGroup {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.areaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid $border;
+}
+
+.areaHeader div {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.areaHeader svg {
+  flex: 0 0 auto;
+  color: $accent-2;
+  font-size: 1.15rem;
+}
+
+.areaHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.areaHeader > span {
+  color: $muted;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .missingItem {
@@ -198,6 +251,21 @@
   margin: 0 0 0.4rem;
 }
 
+.itemBody .location {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+  color: $text;
+  font-weight: 650;
+}
+
+.location svg {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  color: $accent-2;
+}
+
 .obtainButton {
   grid-column: 1 / -1;
   display: flex;
@@ -234,5 +302,6 @@
 
   .summary {
     width: min(30rem, 100%);
+    grid-template-columns: repeat(4, 1fr);
   }
 }

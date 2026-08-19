@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
         short_name: 'Ghostoy',
         description: 'Builds y colección de Ghost of Yotei',
         lang: 'en',
-        theme_color: '#b7342c',
+        theme_color: '#c5992e',
         background_color: '#101211',
         display: 'standalone',
         start_url: '/',

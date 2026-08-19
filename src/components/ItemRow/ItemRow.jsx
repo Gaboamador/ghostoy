@@ -1,8 +1,9 @@
 import { HiCheck, HiOutlineLocationMarker } from 'react-icons/hi';
 
+import LocationDetails from '../LocationDetails';
 import styles from './ItemRow.module.scss';
 
-export default function ItemRow({ item, checked, onToggle, subtitle }) {
+export default function ItemRow({ item, checked, onToggle, subtitle, entityType }) {
   const description = item.effect || item.perkFocus;
 
   return (
@@ -35,6 +36,10 @@ export default function ItemRow({ item, checked, onToggle, subtitle }) {
           <p className={styles.upgrade}>
             <strong>Mejora:</strong> {item.upgradeMethod}
           </p>
+        )}
+
+        {entityType && (
+          <LocationDetails entityType={entityType} appId={item.id} compact />
         )}
       </div>
     </article>

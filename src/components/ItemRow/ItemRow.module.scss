@@ -45,25 +45,28 @@
 }
 
 .check {
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   color: white;
   font-size: 1.2rem;
   background: transparent;
   border: 2px solid $border;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .done {
-  border-color: #6ea77766;
+  border-color: $accent-2;
 }
 
 .done .check {
-  background: $success;
-  border-color: $success;
+  background: $accent;
+  border-color: $shadow;
 }
 
 .done h3 {
-  color: $muted;
-  text-decoration: line-through;
+  color: $accent-2;
+  // text-decoration: line-through;
 }

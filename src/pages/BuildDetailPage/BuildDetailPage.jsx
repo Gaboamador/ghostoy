@@ -11,7 +11,12 @@ import { guideLanguageStorage } from '../../services/storage';
 import styles from './BuildDetailPage.module.scss';
 
 function BuildDetail({ build }) {
-  const { progress, toggleCharm, toggleArmor } = useProgress();
+  const {
+    isArmorObtained,
+    isCharmObtained,
+    toggleCharm,
+    toggleArmor,
+  } = useProgress();
   const buildProgress = useBuildProgress(build);
   const { armor, guide } = build;
   const [guideLanguage, setGuideLanguage] = useState(guideLanguageStorage.load);
@@ -104,7 +109,7 @@ function BuildDetail({ build }) {
       <div className="stack">
         <ItemRow
           item={armor}
-          checked={progress.obtainedArmors.includes(armor.id)}
+          checked={isArmorObtained(armor.id)}
           onToggle={() => toggleArmor(armor.id)}
           subtitle="Armadura"
         />
@@ -113,7 +118,7 @@ function BuildDetail({ build }) {
           <ItemRow
             key={charm.id}
             item={charm}
-            checked={progress.obtainedCharms.includes(charm.id)}
+            checked={isCharmObtained(charm.id)}
             onToggle={() => toggleCharm(charm.id)}
             subtitle={`${charm.slot} · ${charm.type}`}
           />

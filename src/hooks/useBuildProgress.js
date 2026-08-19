@@ -1,11 +1,11 @@
 import { useProgress } from '../context/ProgressContext';
 
 export function useBuildProgress(build) {
-  const { progress } = useProgress();
+  const { isArmorObtained, isCharmObtained } = useProgress();
   const charms = build.charmIds
-    .filter((id) => progress.obtainedCharms.includes(id))
+    .filter(isCharmObtained)
     .length;
-  const armor = progress.obtainedArmors.includes(build.armorId) ? 1 : 0;
+  const armor = isArmorObtained(build.armorId) ? 1 : 0;
 
   return {
     obtained: charms + armor,

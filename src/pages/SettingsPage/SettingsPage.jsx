@@ -29,7 +29,10 @@ export default function SettingsPage() {
 
     try {
       const importedProgress = progressStorage.import(await file.text());
-      setProgress(importedProgress);
+      const { reconcileProgressEntries } = await import(
+        '../../data/ghostOfYoteiSelectors'
+      );
+      setProgress(reconcileProgressEntries(importedProgress));
       setMessage('Progreso importado correctamente.');
     } catch (error) {
       setMessage(error.message);
@@ -47,6 +50,10 @@ export default function SettingsPage() {
       </header>
 
       <div className={styles.actions}>
+        <div className={styles.backupSummary}>
+          <strong>{progress.completedEntries.length}</strong>
+          <span>elementos completados incluidos en el respaldo</span>
+        </div>
         <button className="button" onClick={downloadProgress}>
           Exportar progreso JSON
         </button>

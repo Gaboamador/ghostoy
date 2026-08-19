@@ -1,5 +1,4 @@
-import { armorById } from './armors';
-import { charmById } from './charms';
+import { armorById, charmById } from './ghostOfYoteiSelectors';
 
 const definitions = [
   {
