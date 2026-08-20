@@ -8,10 +8,13 @@ import {
   HiViewGrid,
   HiViewList,
 } from 'react-icons/hi';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { useProgress } from '../../context/ProgressContext';
 import { exploreLocations } from '../../data/exploreCatalog';
 import {
+  armors,
+  charms,
   getCategoryById,
   getCompatibilityByLocationId,
   getLocationById,
@@ -21,6 +24,32 @@ import {
 import styles from './ExplorePage.module.scss';
 
 const PAGE_SIZE = 48;
+const EXPLORE_RETURN_KEY = 'ghostoy:explore-return';
+
+const linkedEntities = [...charms.map((item) => ({ ...item, entityType: 'charm' })),
+  ...armors.map((item) => ({ ...item, entityType: 'armor' }))];
+const exploreLocationById = new Map(exploreLocations.map((location) => [location.id, location]));
+const entityAliases = linkedEntities.flatMap((entity) => [
+  { name: entity.name, entity },
+  ...entity.mapgenieLocationIds
+    .map((locationId) => exploreLocationById.get(locationId))
+    .filter((location) => location?.categoryKey === entity.entityType)
+    .map((location) => location.title)
+    .filter(Boolean)
+    .map((name) => ({ name, entity })),
+]);
+const uniqueEntityAliases = [...new Map(
+  entityAliases.map((entry) => [entry.name.toLocaleLowerCase(), entry]),
+).values()].sort((first, second) => second.name.length - first.name.length);
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const entityNamePattern = new RegExp(
+  `(${uniqueEntityAliases.map((entry) => escapeRegExp(entry.name)).join('|')})`,
+  'gi',
+);
+const entityByName = new Map(
+  uniqueEntityAliases.map((entry) => [entry.name.toLocaleLowerCase(), entry.entity]),
+);
 
 const normalize = (value = '') => value
   .normalize('NFD')
@@ -36,6 +65,44 @@ const mapUrl = (locationId) => (
   `https://mapgenie.io/ghost-of-yotei/maps/yotei?locationIds=${locationId}`
 );
 
+function LinkedDescription({ description, locationId }) {
+  const routeLocation = useLocation();
+  const parts = cleanDescription(description).split(entityNamePattern);
+
+  const rememberExplorePosition = () => {
+    sessionStorage.setItem(EXPLORE_RETURN_KEY, JSON.stringify({
+      path: `${routeLocation.pathname}${routeLocation.search}`,
+      locationId,
+      savedAt: Date.now(),
+    }));
+  };
+
+  return parts.map((part, index) => {
+    const entity = entityByName.get(part.toLocaleLowerCase());
+
+    if (!entity) return part;
+
+    const params = new URLSearchParams({
+      tab: entity.entityType === 'charm' ? 'charms' : 'armors',
+      query: entity.name,
+      focus: entity.id,
+    });
+
+    return (
+      <Link
+        key={`${entity.id}:${index}`}
+        to={`/collection?${params}`}
+        state={{
+          from: `${routeLocation.pathname}${routeLocation.search}#location-${locationId}`,
+        }}
+        onClick={rememberExplorePosition}
+      >
+        {part}
+      </Link>
+    );
+  });
+}
+
 function LocationCard({ location, completed, onToggle }) {
   const category = getCategoryById(location.categoryId);
   const region = getRegionById(location.regionId);
@@ -44,7 +111,10 @@ function LocationCard({ location, completed, onToggle }) {
   const images = location.media.filter((item) => item.type === 'image').slice(0, 3);
 
   return (
-    <article className={`${styles.locationCard} ${completed ? styles.completedCard : ''}`}>
+    <article
+      id={`location-${location.id}`}
+      className={`${styles.locationCard} ${completed ? styles.completedCard : ''}`}
+    >
       <div className={styles.locationHeading}>
         <div>
           <span className="badge">{category?.label ?? location.categoryKey}</span>
@@ -60,7 +130,9 @@ function LocationCard({ location, completed, onToggle }) {
         )}
       </div>
 
-      {description && <p>{description}</p>}
+      {description && (
+        <p><LinkedDescription description={location.description} locationId={location.id} /></p>
+      )}
 
       {relatedLocations.length > 0 && (
         <div className={styles.related}>
@@ -112,7 +184,10 @@ function CompactLocationRow({ location, completed, onToggle }) {
   const region = getRegionById(location.regionId);
 
   return (
-    <article className={`${styles.compactRow} ${completed ? styles.completedRow : ''}`}>
+    <article
+      id={`location-${location.id}`}
+      className={`${styles.compactRow} ${completed ? styles.completedRow : ''}`}
+    >
       <button
         className={styles.compactCheck}
         onClick={onToggle}
@@ -153,6 +228,8 @@ function CompactLocationRow({ location, completed, onToggle }) {
 }
 
 export default function ExplorePage() {
+  const routeLocation = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     progress,
     isArmorObtained,
@@ -162,12 +239,32 @@ export default function ExplorePage() {
     toggleCharm,
     toggleLocation,
   } = useProgress();
-  const [regionId, setRegionId] = useState('all');
-  const [categoryId, setCategoryId] = useState('all');
-  const [completionStatus, setCompletionStatus] = useState('all');
-  const [query, setQuery] = useState('');
-  const [viewMode, setViewMode] = useState('cards');
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [regionId, setRegionId] = useState(() => searchParams.get('region') || 'all');
+  const [categoryId, setCategoryId] = useState(() => searchParams.get('category') || 'all');
+  const [completionStatus, setCompletionStatus] = useState(() => searchParams.get('status') || 'all');
+  const [query, setQuery] = useState(() => searchParams.get('query') || '');
+  const [viewMode, setViewMode] = useState(() => (
+    searchParams.get('view') === 'compact' ? 'compact' : 'cards'
+  ));
+  const [visibleCount, setVisibleCount] = useState(() => (
+    Math.max(PAGE_SIZE, Number(searchParams.get('limit')) || PAGE_SIZE)
+  ));
+  const [returnLocationId] = useState(() => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(EXPLORE_RETURN_KEY));
+      const currentPath = `${routeLocation.pathname}${routeLocation.search}`;
+      const isRecent = Date.now() - saved.savedAt < 30 * 60 * 1000;
+
+      if (saved.path === currentPath && isRecent) {
+        sessionStorage.removeItem(EXPLORE_RETURN_KEY);
+        return saved.locationId;
+      }
+    } catch {
+      sessionStorage.removeItem(EXPLORE_RETURN_KEY);
+    }
+
+    return Number(routeLocation.hash.replace('#location-', '')) || null;
+  });
 
   const availableCategories = useMemo(() => [...ghostOfYoteiDb.categories]
     .sort((first, second) => (
@@ -257,6 +354,37 @@ export default function ExplorePage() {
     .length;
 
   useEffect(() => setVisibleCount(PAGE_SIZE), [categoryId, completionStatus, query, regionId]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (regionId !== 'all') params.set('region', regionId);
+    if (categoryId !== 'all') params.set('category', categoryId);
+    if (completionStatus !== 'all') params.set('status', completionStatus);
+    if (query) params.set('query', query);
+    if (viewMode !== 'cards') params.set('view', viewMode);
+    if (visibleCount > PAGE_SIZE) params.set('limit', visibleCount);
+    setSearchParams(params, { replace: true });
+  }, [categoryId, completionStatus, query, regionId, setSearchParams, viewMode, visibleCount]);
+
+  useEffect(() => {
+    if (!returnLocationId) return;
+
+    const locationIndex = filteredLocations.findIndex((item) => item.id === returnLocationId);
+    if (locationIndex < 0) return;
+
+    const requiredCount = Math.ceil((locationIndex + 1) / PAGE_SIZE) * PAGE_SIZE;
+    if (visibleCount < requiredCount) {
+      setVisibleCount(requiredCount);
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      document.getElementById(`location-${returnLocationId}`)?.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+      });
+    });
+  }, [filteredLocations, returnLocationId, visibleCount]);
 
   const selectedRegion = regionId === 'all'
     ? null

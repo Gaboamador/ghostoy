@@ -449,3 +449,9 @@
     display: none;
   }
 }
+.locationCard > p a {
+  color: $accent-2;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

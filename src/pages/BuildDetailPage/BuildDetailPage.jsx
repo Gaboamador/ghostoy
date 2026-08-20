@@ -127,8 +127,24 @@ function BuildDetail({ build }) {
 
       {build.alternativeCharms.length > 0 && (
         <aside className={styles.alternative}>
-          <strong>Alternativa de slot</strong>
-          <p>{build.alternativeCharms.map((charm) => charm.name).join(', ')}</p>
+          <div className={styles.alternativeHeader}>
+            <strong>Alternativa de slot</strong>
+            <p>
+              Opciones de reemplazo. No se incluyen en el progreso principal del build.
+            </p>
+          </div>
+
+          <div className="stack">
+            {build.alternativeCharms.map((charm) => (
+              <ItemRow
+                key={charm.id}
+                item={charm}
+                checked={isCharmObtained(charm.id)}
+                onToggle={() => toggleCharm(charm.id)}
+                subtitle={`${charm.slot} · ${charm.type}`}
+              />
+            ))}
+          </div>
         </aside>
       )}
     </section>

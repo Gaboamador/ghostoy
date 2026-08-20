@@ -10,16 +10,24 @@
 }
 
 .alternative {
+  display: grid;
+  gap: 0.75rem;
   margin-top: 1rem;
   padding: 1rem;
   border: 1px dashed $border;
   border-radius: $r-md;
-  color: $muted;
-  text-align: center;
+  background: #ffffff05;
 }
 
-.alternative p {
+.alternativeHeader p {
   margin: 0.35rem 0 0;
+  color: $muted;
+  font-size: 0.85rem;
+}
+
+.alternative article {
+  background: $surface-2;
+  border-style: dashed;
 }
 
 .guide {

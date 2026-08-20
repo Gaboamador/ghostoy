@@ -1,3 +1,17 @@
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  color: #aba99f;
+}
+
+.focusedItem {
+  border-radius: 1rem;
+  outline: 2px solid #c5992e;
+  outline-offset: 3px;
+}
+
 .tabs,
 .filterGrid {
   display: grid;

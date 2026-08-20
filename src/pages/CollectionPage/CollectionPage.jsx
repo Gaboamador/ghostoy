@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { HiArrowLeft } from 'react-icons/hi';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import ItemRow from '../../components/ItemRow';
 import { useProgress } from '../../context/ProgressContext';
@@ -42,14 +44,19 @@ const sortCollection = (items, tab) => [...items].sort((first, second) => {
 });
 
 export default function CollectionPage() {
+  const routeLocation = useLocation();
+  const [searchParams] = useSearchParams();
   const { progress, toggleCharm, toggleArmor } = useProgress();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => searchParams.get('query') || '');
   const [type, setType] = useState('Todos');
   const [slot, setSlot] = useState('Todos');
   const [status, setStatus] = useState('Todos');
   const [region, setRegion] = useState('Todas');
   const [dataQuality, setDataQuality] = useState('Todos');
-  const [tab, setTab] = useState('charms');
+  const [tab, setTab] = useState(() => (
+    searchParams.get('tab') === 'armors' ? 'armors' : 'charms'
+  ));
+  const focusId = searchParams.get('focus');
 
   const types = useMemo(
     () => ['Todos', ...new Set(charms.map((charm) => charm.type).sort())],
@@ -100,8 +107,25 @@ export default function CollectionPage() {
     else toggleArmor(item.id);
   };
 
+  useEffect(() => {
+    if (!focusId || !filteredItems.some((item) => item.id === focusId)) return;
+
+    requestAnimationFrame(() => {
+      document.getElementById(`collection-${focusId}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    });
+  }, [filteredItems, focusId]);
+
   return (
     <section className="page">
+      {routeLocation.state?.from && (
+        <Link to={routeLocation.state.from} className={styles.backLink}>
+          <HiArrowLeft /> Volver a Explorar
+        </Link>
+      )}
+
       <header className="pageHeader">
         <span className="eyebrow">Tu inventario</span>
         <h1>Colección</h1>
@@ -212,14 +236,19 @@ export default function CollectionPage() {
         )}
 
         {filteredItems.map((item) => (
-          <ItemRow
+          <div
             key={item.id}
-            item={item}
-            checked={obtainedIds.includes(item.id)}
-            onToggle={() => toggleItem(item)}
-            subtitle={tab === 'charms' ? `${item.slot} · ${item.type}` : item.perkFocus}
-            entityType={tab === 'charms' ? 'charm' : 'armor'}
-          />
+            id={`collection-${item.id}`}
+            className={item.id === focusId ? styles.focusedItem : ''}
+          >
+            <ItemRow
+              item={item}
+              checked={obtainedIds.includes(item.id)}
+              onToggle={() => toggleItem(item)}
+              subtitle={tab === 'charms' ? `${item.slot} · ${item.type}` : item.perkFocus}
+              entityType={tab === 'charms' ? 'charm' : 'armor'}
+            />
+          </div>
         ))}
       </div>
     </section>
