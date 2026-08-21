@@ -61,9 +61,10 @@ const cleanDescription = (description = '') => description
   .replace(/[*_#>`]/g, '')
   .trim();
 
-const mapUrl = (locationId) => (
-  `https://mapgenie.io/ghost-of-yotei/maps/yotei?locationIds=${locationId}`
-);
+const mapUrl = (locationIds) => {
+  const ids = Array.isArray(locationIds) ? locationIds.join(',') : locationIds;
+  return `https://mapgenie.io/ghost-of-yotei/maps/yotei?locationIds=${ids}`;
+};
 
 function LinkedDescription({ description, locationId }) {
   const routeLocation = useLocation();
@@ -326,6 +327,14 @@ export default function ExplorePage() {
     scopedLocations,
   ]);
 
+  const filteredMapLocationIds = useMemo(() => [
+    ...new Set(
+      filteredLocations
+        .filter((location) => !location.isCatalogEntry)
+        .map((location) => location.id),
+    ),
+  ], [filteredLocations]);
+
   const locationsMatchingFilters = useMemo(() => exploreLocations
     .filter((location) => categoryId === 'all' || location.categoryId === Number(categoryId))
     .filter((location) => completionStatus === 'all'
@@ -485,6 +494,33 @@ export default function ExplorePage() {
               <option value="pending">Pendientes</option>
             </select>
           </label>
+        </div>
+
+        <div className={styles.bulkMapAction}>
+          <div>
+            <strong>Mostrar filtrados en el mapa</strong>
+            <span>
+              {selectedCategory
+                ? `${filteredMapLocationIds.length} marcadores de ${selectedCategory.label}`
+                : 'Elegí una categoría para abrir sus marcadores juntos'}
+            </span>
+          </div>
+
+          {selectedCategory && filteredMapLocationIds.length > 0 ? (
+            <a
+              className="button"
+              href={mapUrl(filteredMapLocationIds)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Abrir ${filteredMapLocationIds.length} marcadores de ${selectedCategory.label} en MapGenie`}
+            >
+              Abrir {filteredMapLocationIds.length} <HiExternalLink />
+            </a>
+          ) : (
+            <button className="button" disabled>
+              Abrir mapa <HiExternalLink />
+            </button>
+          )}
         </div>
 
         <div className={styles.viewControls} aria-label="Modo de visualización">

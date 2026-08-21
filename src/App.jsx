@@ -8,6 +8,7 @@ import SettingsPage from './pages/SettingsPage';
 const MissingPage = lazy(() => import('./pages/MissingPage'));
 const CollectionPage = lazy(() => import('./pages/CollectionPage'));
 const ExplorePage = lazy(() => import('./pages/ExplorePage'));
+const SkillsPage = lazy(() => import('./pages/SkillsPage'));
 const BuildDetailPage = lazy(() => import('./pages/BuildDetailPage'));
 
 export default function App() {
@@ -16,6 +17,14 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/builds" replace />} />
         <Route path="/builds" element={<BuildsPage />} />
+        <Route
+          path="/skills"
+          element={(
+            <Suspense fallback={<p className="empty">Cargando habilidades…</p>}>
+              <SkillsPage />
+            </Suspense>
+          )}
+        />
         <Route
           path="/builds/:buildId"
           element={(

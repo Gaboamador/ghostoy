@@ -3,6 +3,7 @@ import {
   HiOutlineClipboardList,
   HiOutlineCog,
   HiOutlineCollection,
+  HiOutlineLightningBolt,
   HiOutlineMap,
 } from 'react-icons/hi';
 import { NavLink } from 'react-router-dom';
@@ -11,6 +12,7 @@ import styles from './Layout.module.scss';
 
 const links = [
   ['/builds', 'Builds', GiSamuraiHelmet],
+  ['/skills', 'Skills', HiOutlineLightningBolt],
   ['/collection', 'Colección', HiOutlineCollection],
   ['/explore', 'Explorar', HiOutlineMap],
   ['/missing', 'Faltantes', HiOutlineClipboardList],

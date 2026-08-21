@@ -46,10 +46,12 @@ export function ProgressProvider({ children }) {
     isCharmObtained: (id) => hasEntry(progress, 'charm', id),
     isArmorObtained: (id) => hasEntry(progress, 'armor', id),
     isLocationCompleted: (id) => hasEntry(progress, 'location', id),
+    isSkillObtained: (id) => hasEntry(progress, 'skill', id),
     toggleCharm: (id) => toggleCompletedEntry('charm', id),
     toggleArmor: (id) => toggleCompletedEntry('armor', id),
     toggleFavorite: (id) => toggle('favoriteBuilds', id),
     toggleLocation: (id) => toggleCompletedEntry('location', id),
+    toggleSkill: (id) => toggleCompletedEntry('skill', id),
   }), [progress]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;

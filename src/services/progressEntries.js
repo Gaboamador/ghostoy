@@ -2,6 +2,7 @@ export const entryId = {
   charm: (id) => `charm:${id}`,
   armor: (id) => `armor:${id}`,
   location: (id) => `location:${id}`,
+  skill: (id) => `skill:${id}`,
 };
 
 export const hasEntry = (progress, type, id) => (
